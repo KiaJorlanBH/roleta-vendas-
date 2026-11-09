@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#081426">
+    <meta name="description" content="Roleta de Vendas Jorlan: uma celebração para cada conquista.">
+    <title>Roleta de Vendas – Jorlan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="js/supabase-config.js"></script>
+    <script defer src="js/supabase-client.js"></script>
+    <script src="js/app.js?v=wheel-tick-soft-4" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Jorlan, início">
+        <span class="brand__mark" aria-hidden="true">J</span>
+        <span class="brand__name">JORLAN<span> VENDAS</span></span>
+      </a>
+      <div class="event-label"><span class="event-label__dot"></span> MOMENTO DE PREMIAR</div>
+      <div class="topbar__actions">
+        <div class="topbar__edition">KIA <span>•</span> RENAULT</div>
+        <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Desativar som" aria-pressed="true" title="Desativar som">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+            <path class="sound-toggle__wave" d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+            <path class="sound-toggle__wave sound-toggle__wave--outer" d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+            <path class="sound-toggle__mute" d="m16 9 5 6m0-6-5 6"></path>
+          </svg>
+        </button>
+        <button class="admin-toggle" id="open-admin" type="button">ÁREA DO GESTOR</button>
+      </div>
+    </header>
+
+    <section class="sound-test" id="sound-test-panel" aria-label="Teste de efeitos sonoros" hidden>
+      <span class="sound-test__label">TESTAR SONS</span>
+      <button type="button" data-sound-test="tick">Cliques</button>
+      <button type="button" data-sound-test="victory">Vitória</button>
+      <span class="sound-test__feedback" id="sound-test-feedback" role="status" aria-live="polite"></span>
+    </section>
+
+    <main class="page">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow"><span class="eyebrow__line"></span> CADA VENDA MERECE UMA CELEBRAÇÃO</p>
+        <h1 id="page-title">A próxima conquista<br>pode ser <span>sua.</span></h1>
+        <p class="intro__copy">Uma venda, uma rodada e um prêmio esperando por você.</p>
+      </section>
+
+      <section class="game" aria-label="Roleta de prêmios">
+        <div class="wheel-column">
+          <div class="wheel-stage">
+            <div class="wheel-pointer" aria-hidden="true">
+              <span class="wheel-pointer__shine"></span>
+            </div>
+            <div class="wheel-frame">
+              <canvas id="wheel" aria-label="Roleta com 40 fatias identificadas pelo nome do prêmio">Roleta com 40 fatias e os respectivos prêmios.</canvas>
+              <div class="wheel-hub" aria-hidden="true">
+                <span class="wheel-hub__star">✦</span>
+                <span>JORLAN</span>
+              </div>
+            </div>
+          </div>
+          <p class="wheel-hint"><span aria-hidden="true">✦</span> 40 chances de comemorar</p>
+        </div>
+
+        <aside class="play-panel">
+          <div class="panel-topline"><span class="panel-topline__icon" aria-hidden="true">✦</span> SUA HORA CHEGOU</div>
+          <h2>Gire a roleta<br>e descubra seu prêmio.</h2>
+          <p class="play-panel__copy">Fechou negócio? Então é hora de girar. Boa sorte!</p>
+
+          <div class="spin-identity">
+            <label>
+              <span>LOJA</span>
+              <select id="spin-store" required>
+                <option value="">Selecione a loja</option>
+              </select>
+            </label>
+            <label>
+              <span>VENDEDOR</span>
+              <select id="spin-seller" required disabled>
+                <option value="">Selecione a loja primeiro</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="prize-card" id="prize-card" aria-live="polite" aria-atomic="true">
+            <span class="prize-card__label" id="result-label">PRÊMIO DA RODADA</span>
+            <span class="prize-card__value" id="result-value">Sua sorte está<br>logo ali <span>✦</span></span>
+            <span class="prize-card__meta" id="result-meta"></span>
+          </div>
+
+          <p class="spin-block-message" id="spin-block-message" role="status" aria-live="polite"></p>
+          <button class="delivery-button" id="confirm-delivery" type="button" hidden>✓ CONFIRMAR ENTREGA DO PRÊMIO</button>
+          <button class="spin-button" id="spin-button" type="button">
+            <span class="spin-button__icon" aria-hidden="true">↻</span>
+            <span id="button-label">GIRAR ROLETA</span>
+            <span class="spin-button__arrow" aria-hidden="true">→</span>
+          </button>
+          <p class="play-panel__note"><span aria-hidden="true">🔒</span> Um giro por venda. Prêmios não acumulativos.</p>
+        </aside>
+      </section>
+
+      <section class="admin" id="admin" aria-labelledby="admin-title" hidden>
+        <div class="admin__heading">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__line"></span> PAINEL DO GESTOR • ACESSO RESTRITO</p>
+            <h1 id="admin-title">Gestão da <span>roleta.</span></h1>
+            <p class="intro__copy">Gerencie a equipe, os prêmios por loja e o histórico de giros.</p>
+          </div>
+          <div class="admin__heading-actions">
+            <button class="admin__secondary" id="export-backup" type="button">↓ EXPORTAR BACKUP</button>
+            <button class="admin__secondary" id="import-backup-button" type="button">↑ IMPORTAR BACKUP</button>
+            <input id="import-backup" type="file" accept="application/json,.json" hidden>
+            <span class="backup-status" id="backup-status" role="status">Último backup: ainda não registrado</span>
+            <button class="admin__back" id="close-admin" type="button">← VOLTAR À ROLETA</button>
+          </div>
+        </div>
+
+        <div class="admin-feedback backup-feedback" id="backup-feedback" role="status" aria-live="polite"></div>
+        <aside class="security-notice" role="note">
+          O acesso é validado pelo Supabase Auth e as operações administrativas são protegidas por políticas RLS.
+          A chave pública do frontend não é secreta; nunca publique a chave service_role.
+        </aside>
+
+        <nav class="admin-tabs" aria-label="Seções de gestão">
+          <button class="admin-tab is-active" type="button" data-admin-tab="vendors" aria-selected="true">VENDEDORES</button>
+          <button class="admin-tab" type="button" data-admin-tab="prizes" aria-selected="false">GESTÃO DA ROLETA</button>
+          <button class="admin-tab" type="button" data-admin-tab="history" aria-selected="false">HISTÓRICO</button>
+        </nav>
+
+        <section class="admin-pane" id="vendor-pane" aria-label="Gestão de vendedores">
+          <div class="management-heading">
+            <div>
+              <p class="panel-topline">EQUIPE POR CONCESSIONÁRIA</p>
+              <h2>Vendedores</h2>
+            </div>
+            <button class="admin__add" id="show-vendor-form" type="button">＋ ADICIONAR VENDEDOR</button>
+          </div>
+
+          <div class="vendor-store-counts" id="vendor-store-counts"></div>
+
+          <form class="vendor-form" id="vendor-form" hidden>
+            <label>
+              <span>NOME DO VENDEDOR</span>
+              <input id="vendor-name" name="name" maxlength="80" autocomplete="off" placeholder="Ex.: Ana Silva" required>
+            </label>
+            <label>
+              <span>CONCESSIONÁRIA</span>
+              <select id="vendor-store" name="storeId" required></select>
+            </label>
+            <div class="vendor-form__actions">
+              <button class="admin__add" id="vendor-submit" type="submit">SALVAR VENDEDOR</button>
+              <button class="admin__secondary" id="vendor-cancel" type="button">CANCELAR</button>
+            </div>
+          </form>
+
+          <div class="vendor-filters">
+            <label>
+              <span>PESQUISAR NOME</span>
+              <input id="vendor-search" type="search" placeholder="Buscar vendedor">
+            </label>
+            <label>
+              <span>CONCESSIONÁRIA</span>
+              <select id="vendor-store-filter"></select>
+            </label>
+            <label class="vendor-active-filter"><input id="show-inactive-vendors" type="checkbox"> Mostrar inativos</label>
+          </div>
+
+          <div class="admin-feedback" id="vendor-feedback" role="status" aria-live="polite"></div>
+          <div class="admin-table-wrap">
+            <table class="admin-table management-table">
+              <thead>
+                <tr><th scope="col">VENDEDOR</th><th scope="col">STATUS</th><th scope="col">HISTÓRICO</th><th scope="col">AÇÕES</th></tr>
+              </thead>
+              <tbody id="vendor-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-pane" id="prize-pane" aria-label="Gestão da roleta por concessionária" hidden>
+          <div class="management-heading prize-management-heading">
+            <div>
+              <p class="panel-topline">40 FATIAS INDEPENDENTES</p>
+              <h2>Gestão da Roleta</h2>
+            </div>
+            <label class="management-store-filter">
+              <span>CONCESSIONÁRIA</span>
+              <select id="prize-store"></select>
+            </label>
+          </div>
+
+          <div class="admin-stats" aria-live="polite">
+            <div class="admin-stat"><span>POSIÇÕES</span><strong id="position-count">40 / 40</strong></div>
+            <div class="admin-stat"><span>CUSTO TOTAL ESTIMADO</span><strong id="total-cost">R$ 406,00</strong></div>
+            <div class="admin-stat"><span>CUSTO MÉDIO POR GIRO</span><strong id="average-cost">R$ 10,15</strong></div>
+          </div>
+
+          <div class="admin-toolbar">
+            <p>As quantidades representam fatias independentes. A cor da linha é aplicada às posições deste prêmio.</p>
+            <div class="admin-toolbar__actions">
+              <button class="admin__secondary" id="shuffle-colors" type="button">✦ SORTEAR CORES</button>
+              <button class="admin__add" id="add-prize" type="button">＋ ADICIONAR PRÊMIO</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th scope="col">PRÊMIO</th><th scope="col">QUANTIDADE</th><th scope="col">CUSTO UNITÁRIO</th><th scope="col">COR</th><th scope="col"><span class="visually-hidden">Ações</span></th></tr>
+              </thead>
+              <tbody id="prize-rows"></tbody>
+            </table>
+          </div>
+
+          <h3 class="slice-preview-title">As 40 fatias desta concessionária</h3>
+          <div class="slice-preview" id="slice-preview" aria-label="Prévia das 40 fatias"></div>
+
+          <div class="admin-feedback" id="admin-feedback" role="status" aria-live="polite"></div>
+          <div class="admin-actions">
+            <div class="admin-actions__files">
+              <button class="admin__secondary" id="export-config" type="button">↓ EXPORTAR JSON</button>
+              <button class="admin__secondary" id="import-config-button" type="button">↑ IMPORTAR JSON</button>
+              <button class="admin__secondary" id="restore-config" type="button">RESTAURAR PADRÃO</button>
+              <input id="import-config" type="file" accept="application/json,.json" hidden>
+            </div>
+            <button class="spin-button admin__save" id="save-config" type="button" disabled>SALVAR CONFIGURAÇÃO</button>
+          </div>
+        </section>
+
+        <section class="admin-pane history-section" id="history-pane" aria-label="Histórico de premiações" hidden>
+          <div class="management-heading">
+            <div>
+              <p class="panel-topline">REGISTRO DE PREMIAÇÕES</p>
+              <h2>Histórico de giros</h2>
+            </div>
+            <button class="admin__secondary" id="export-history" type="button">↓ EXPORTAR CSV</button>
+          </div>
+
+          <div class="store-history-totals" id="store-history-totals"></div>
+
+          <div class="history-filters">
+            <label><span>CONCESSIONÁRIA</span><select id="history-store"></select></label>
+            <label><span>VENDEDOR</span><select id="history-seller"></select></label>
+            <label><span>DE</span><input id="history-from" type="date"></label>
+            <label><span>ATÉ</span><input id="history-to" type="date"></label>
+            <button class="admin__secondary" id="clear-history-filters" type="button">LIMPAR FILTROS</button>
+          </div>
+
+          <div class="admin-stats history-stats" aria-live="polite">
+            <div class="admin-stat"><span>GIROS NO PERÍODO</span><strong id="history-count">0</strong></div>
+            <div class="admin-stat"><span>CUSTO ESTIMADO</span><strong id="history-cost">R$ 0,00</strong></div>
+            <div class="admin-stat"><span>ENTREGAS CONFIRMADAS</span><strong id="history-delivered">0 / 0</strong></div>
+          </div>
+
+          <div class="admin-feedback" id="history-feedback" role="status" aria-live="polite"></div>
+          <div class="admin-table-wrap">
+            <table class="admin-table history-table">
+              <thead>
+                <tr>
+                  <th scope="col">DATA / HORA</th><th scope="col">CONCESSIONÁRIA</th><th scope="col">VENDEDOR</th>
+                  <th scope="col">PRÊMIO</th><th scope="col">CUSTO</th><th scope="col">ID DA RODADA</th>
+                  <th scope="col">SITUAÇÃO</th><th scope="col"><span class="visually-hidden">Ações</span></th>
+                </tr>
+              </thead>
+              <tbody id="history-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <span>FEITO PARA CELEBRAR GRANDES CONQUISTAS</span>
+        <span class="footer__sparkle" aria-hidden="true">✦</span>
+        <span>JORLAN <span class="footer__year">•</span> KIA &amp; RENAULT</span>
+      </footer>
+    </main>
+
+    <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+  </body>
+</html>

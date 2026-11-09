@@ -1,0 +1,32 @@
+# Environment and local credentials
+.env
+.env.*
+!.env.example
+*.local
+
+# Local backups and temporary exports
+backup/
+backups/
+**/*backup*.json
+**/*.backup
+**/*.bak
+*.tmp
+*.log
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Local tooling and generated files
+node_modules/
+coverage/
+/dist/
+.vscode/
+.DS_Store
+Thumbs.db
+supabase/.temp/
+.supabase/

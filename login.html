@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#081426">
+    <meta name="description" content="Acesso do gerente à Roleta de Vendas Jorlan.">
+    <title>Área do Gestor – Roleta Jorlan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/login.js" defer></script>
+  </head>
+  <body class="login-page">
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Voltar à roleta">
+        <span class="brand__mark" aria-hidden="true">J</span>
+        <span class="brand__name">JORLAN<span> VENDAS</span></span>
+      </a>
+      <a class="login-home-link" href="index.html">VOLTAR À ROLETA</a>
+    </header>
+    <main class="login-card">
+      <p class="eyebrow"><span class="eyebrow__line"></span> ÁREA DO GESTOR</p>
+      <h1>Acesse o <span>painel.</span></h1>
+      <p class="login-copy">Entre com o usuário gerente e a senha cadastrada no Supabase Auth.</p>
+      <aside class="security-notice" role="note">
+        A autenticação do gerente é validada pelo Supabase. O frontend usa somente a chave pública
+        anon; nunca coloque a chave service_role ou outros segredos nos arquivos publicados.
+      </aside>
+      <form class="login-form" id="login-form">
+        <label>
+          <span>USUÁRIO</span>
+          <input id="login-user" name="username" autocomplete="username" placeholder="Usuário" required>
+        </label>
+        <label>
+          <span>SENHA</span>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Senha" required>
+        </label>
+        <p class="login-error" id="login-error" role="alert" hidden></p>
+        <button class="spin-button" type="submit">ENTRAR <span aria-hidden="true">→</span></button>
+      </form>
+    </main>
+  </body>
+</html>
